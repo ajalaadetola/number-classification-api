@@ -50,39 +50,40 @@ const getFunFact = async (num) => {
 app.get("/api/classify-number", async (req, res) => {
     const { number } = req.query;
 
-    // Validate input
+    // Validate input: Ensure the number is provided and valid
     if (!number || isNaN(number)) {
-        return res.status(400).json({ error: "Invalid number" });
+        return res.status(400).json({ 
+            number,  // ✅ Include the invalid input as it was received
+            error: "Invalid number" 
+        });
     }
 
-    const num = parseInt(number);
-    const properties = [];
+    const num = Number(number); // Convert to a valid number
 
+    const properties = [];
     if (isArmstrong(num)) properties.push("armstrong");
     properties.push(num % 2 === 0 ? "even" : "odd");
 
     const funFact = await getFunFact(num);
 
     // ✅ Fix: Ensure digit_sum is numeric, even for negative numbers
-    const digitSum = Math.abs(num)  // Remove negative sign
+    const digitSum = Math.abs(num)
         .toString()
         .split("")
+        .filter(char => !isNaN(char)) // Remove non-numeric characters like "-"
         .reduce((sum, digit) => sum + parseInt(digit), 0);
-
-    // ✅ Extra validation to ensure digit_sum is numeric
-    if (isNaN(digitSum)) {
-        return res.status(400).json({ error: "digit_sum must be numeric (failed on negative input)" });
-    }
 
     res.json({
         number: num,
         is_prime: isPrime(num),
         is_perfect: isPerfect(num),
         properties,
-        digit_sum: digitSum,  // ✅ Now always a valid number!
+        digit_sum: digitSum,
         fun_fact: funFact
     });
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {
