@@ -7,32 +7,34 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
-// ✅ Function to correctly calculate digit sum, even for negative numbers
-function digitSum(number) {
-    // Convert to absolute value, split digits, and sum them
-    return Math.abs(number)
-        .toString()
-        .split('')
-        .reduce((sum, digit) => sum + parseInt(digit), 0);
-}
-
-// ✅ Your other number classification functions go here
-function isPrime(num) {
+// Function to check if a number is prime
+const isPrime = (num) => {
     if (num < 2) return false;
-    for (let i = 2; i <= Math.sqrt(num); i++) {
+    for (let i = 2; i * i <= num; i++) {
         if (num % i === 0) return false;
     }
     return true;
-}
+};
 
-function isFibonacci(num) {
-    let a = 0, b = 1;
-    while (b < num) {
-        [a, b] = [b, a + b];
+// Function to check if a number is an Armstrong number
+const isArmstrong = (num) => {
+    const digits = num.toString().split("").map(Number);
+    const power = digits.length;
+    const sum = digits.reduce((acc, digit) => acc + Math.pow(digit, power), 0);
+    return sum === num;
+};
+
+// Function to check if a number is perfect
+const isPerfect = (num) => {
+    let sum = 1;
+    for (let i = 2; i * i <= num; i++) {
+        if (num % i === 0) {
+            sum += i;
+            if (i !== num / i) sum += num / i;
+        }
     }
-    return b === num;
-}
-
+    return sum === num && num !== 1;
+};
 
 // Fetch a fun fact from Numbers API
 const getFunFact = async (num) => {
@@ -45,30 +47,30 @@ const getFunFact = async (num) => {
 };
 
 // API Endpoint
-app.get('/api/classify-number', (req, res) => {
-    let { number } = req.query;
+app.get("/api/classify-number", async (req, res) => {
+    const { number } = req.query;
 
-    // Validate input: Ensure number is provided and is a valid numeric value
+    // Validate input
     if (!number || isNaN(number)) {
-        return res.status(400).json({ error: "Invalid number" });
+        return res.status(400).json({ number, error: true });
     }
 
-    // Convert input to a number
-    number = parseFloat(number); 
+    const num = parseInt(number);
+    const properties = [];
+    if (isArmstrong(num)) properties.push("armstrong");
+    properties.push(num % 2 === 0 ? "even" : "odd");
 
-    // Construct the response object
-    const response = {
-        number: number,
-        digit_sum: digitSum(number),  // ✅ Ensure correct digit sum for negative numbers
-        isEven: number % 2 === 0,
-        isPrime: isPrime(number),
-        isFibonacci: isFibonacci(number),
-    };
+    const funFact = await getFunFact(num);
 
-    // Send the JSON response
-    res.json(response);
+    res.json({
+        number: num,
+        is_prime: isPrime(num),
+        is_perfect: isPerfect(num),
+        properties,
+        digit_sum: num.toString().split("").reduce((sum, digit) => sum + parseInt(digit), 0),
+        fun_fact: funFact
+    });
 });
-
 
 // Start the server
 app.listen(PORT, () => {
