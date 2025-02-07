@@ -1,26 +1,26 @@
 {
   "name": "number-classification-api",
   "version": "1.0.0",
+  "description": "The **Number Classification API** is a simple RESTful API that takes a number as input and returns various mathematical properties, including:\r - **Prime number check**\r - **Perfect number check**\r - **Armstrong number check**\r - **Odd/Even classification**\r - **Sum of digits**\r - **Fun fact from the Numbers API**",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "The **Number Classification API** is a simple RESTful API that takes a number as input and returns various mathematical properties, including:\r - **Prime number check**\r - **Perfect number check**\r - **Armstrong number check**\r - **Odd/Even classification**\r - **Sum of digits**\r - **Fun fact from the Numbers API**",
-  "dependencies": {
-    "axios": "^1.7.9",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ajalaadetola/number-classification-api.git"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/ajalaadetola/number-classification-api/issues"
   },
-  "homepage": "https://github.com/ajalaadetola/number-classification-api#readme"
+  "homepage": "https://github.com/ajalaadetola/number-classification-api#readme",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
 }

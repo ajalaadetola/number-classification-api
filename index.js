@@ -52,22 +52,34 @@ app.get("/api/classify-number", async (req, res) => {
 
     // Validate input
     if (!number || isNaN(number)) {
-        return res.status(400).json({ number, error: true });
+        return res.status(400).json({ error: "Invalid number" });
     }
 
     const num = parseInt(number);
     const properties = [];
+
     if (isArmstrong(num)) properties.push("armstrong");
     properties.push(num % 2 === 0 ? "even" : "odd");
 
     const funFact = await getFunFact(num);
+
+    // ✅ Fix: Ensure digit_sum is numeric, even for negative numbers
+    const digitSum = Math.abs(num)  // Remove negative sign
+        .toString()
+        .split("")
+        .reduce((sum, digit) => sum + parseInt(digit), 0);
+
+    // ✅ Extra validation to ensure digit_sum is numeric
+    if (isNaN(digitSum)) {
+        return res.status(400).json({ error: "digit_sum must be numeric (failed on negative input)" });
+    }
 
     res.json({
         number: num,
         is_prime: isPrime(num),
         is_perfect: isPerfect(num),
         properties,
-        digit_sum: num.toString().split("").reduce((sum, digit) => sum + parseInt(digit), 0),
+        digit_sum: digitSum,  // ✅ Now always a valid number!
         fun_fact: funFact
     });
 });
